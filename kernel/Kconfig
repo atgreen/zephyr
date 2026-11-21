@@ -140,7 +140,7 @@ config SCHED_DEADLINE
 config MAIN_STACK_SIZE
 	int "Size of stack for initialization and main thread"
 	default 2048 if COVERAGE_GCOV
-	default 512 if ZTEST && !(RISCV || X86 || ARM || ARC || OPENRISC || HEXAGON)
+	default 512 if ZTEST && !(RISCV || X86 || ARM || ARC || OPENRISC || HEXAGON || MOXIE)
 	default 1024
 	help
 	  When the initialization is complete, the thread executing it then
@@ -153,7 +153,7 @@ config IDLE_STACK_SIZE
 	int "Size of stack for idle thread"
 	default 2048 if COVERAGE_GCOV
 	default 1024 if XTENSA
-	default 512 if RISCV
+	default 512 if RISCV || MOXIE
 	default 384 if DYNAMIC_OBJECTS
 	default 320 if ARC || (ARM && CPU_HAS_FPU) || (X86 && MMU)
 	default 256

@@ -1,0 +1,12 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+description: Console of the mox125 simulation; bytes written to it are printed.
+
+compatible: "moxie,sim-uart"
+
+include: uart-controller.yaml
+
+properties:
+  reg:
+    required: true

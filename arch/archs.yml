@@ -20,6 +20,9 @@ archs:
   - name: riscv
     path: riscv
     full_name: RISC-V
+  - name: moxie
+    path: moxie
+    full_name: Moxie
   - name: sparc
     path: sparc
     full_name: SPARC

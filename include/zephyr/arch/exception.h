@@ -172,6 +172,8 @@ static inline void arch_exception_call_dump_hook(const char *format, ...)
 #include <zephyr/arch/mips/exception.h>
 #elif defined(CONFIG_OPENRISC)
 #include <zephyr/arch/openrisc/exception.h>
+#elif defined(CONFIG_MOXIE)
+#include <zephyr/arch/moxie/exception.h>
 #elif defined(CONFIG_ARCH_POSIX)
 #include <zephyr/arch/posix/exception.h>
 #elif defined(CONFIG_SPARC)

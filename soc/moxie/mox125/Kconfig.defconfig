@@ -1,0 +1,9 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_MOX125
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency)
+
+endif # SOC_MOX125

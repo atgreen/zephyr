@@ -1,0 +1,9 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+board:
+  name: mox125_sim
+  full_name: mox125 Verilator simulation
+  vendor: moxie
+  socs:
+    - name: mox125

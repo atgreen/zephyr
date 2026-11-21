@@ -1,0 +1,119 @@
+/*
+ * Copyright (c) 2026 Anthony Green
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/toolchain.h>
+#include <zephyr/linker/sections.h>
+#include <zephyr/arch/moxie/moxie_sr.h>
+#include <offsets_short.h>
+
+#define ESF(field)	__struct_arch_esf_##field##_OFFSET
+#define KERNEL(field)	_kernel + _kernel_offset_to_##field
+
+GTEXT(z_moxie_exception_entry)
+GTEXT(z_moxie_handle_irqs)
+GTEXT(z_moxie_exception)
+GTEXT(z_moxie_switch)
+GTEXT(z_get_next_switch_handle)
+GDATA(_kernel)
+
+/*
+ * Every exception lands here with interrupts disabled.  The core has
+ * copied the status (interrupt enable and condition codes) into
+ * MOXIE_SR_SAVED_STATUS and the address to resume at into
+ * MOXIE_SR_RESUME; everything else still belongs to whatever was
+ * interrupted.
+ *
+ * Save the caller-saved registers in an exception frame on the
+ * interrupted stack.  The callee-saved ones are preserved by the C
+ * code we call, or saved by z_moxie_switch() if we end up switching
+ * threads.  The exception is $r6, which we need for ourselves to
+ * remember where the frame is.
+ */
+SECTION_FUNC(TEXT, z_moxie_exception_entry)
+	dec	$sp, __struct_arch_esf_SIZEOF
+	sto.l	ESF(r0)($sp), $r0
+	sto.l	ESF(r1)($sp), $r1
+	sto.l	ESF(r2)($sp), $r2
+	sto.l	ESF(r3)($sp), $r3
+	sto.l	ESF(r4)($sp), $r4
+	sto.l	ESF(r5)($sp), $r5
+	sto.l	ESF(r12)($sp), $r12
+	sto.l	ESF(r13)($sp), $r13
+	sto.l	ESF(r6)($sp), $r6
+	sto.l	ESF(fp)($sp), $fp
+	gsr	$r0, MOXIE_SR_RESUME
+	sto.l	ESF(pc)($sp), $r0
+	gsr	$r0, MOXIE_SR_SAVED_STATUS
+	sto.l	ESF(sr)($sp), $r0
+	mov	$r6, $sp
+
+	/* The outermost exception moves to the interrupt stack. */
+	lda.l	$r0, KERNEL(nested)
+	inc	$r0, 1
+	sta.l	KERNEL(nested), $r0
+	ldi.l	$r1, 1
+	cmp	$r0, $r1
+	bne	1f
+	lda.l	$sp, KERNEL(irq_stack)
+1:
+	gsr	$r1, MOXIE_SR_CAUSE
+	ldi.l	$r2, MOXIE_CAUSE_IRQ
+	cmp	$r1, $r2
+	bne	2f
+	jsra	z_moxie_handle_irqs
+	jmpa	3f
+2:
+	/* z_moxie_exception(esf, cause) */
+	mov	$r0, $r6
+	jsra	z_moxie_exception
+3:
+	/* Back to the interrupted stack. */
+	mov	$sp, $r6
+	lda.l	$r0, KERNEL(nested)
+	dec	$r0, 1
+	sta.l	KERNEL(nested), $r0
+	xor	$r1, $r1
+	cmp	$r0, $r1
+	bne	5f
+
+	/*
+	 * We are about to return to a thread.  If the scheduler wants a
+	 * different one, switch to it; we get back here when the
+	 * interrupted thread is next scheduled.
+	 */
+	lda.l	$r1, KERNEL(current)
+	push	$sp, $r1
+	xor	$r0, $r0
+	jsra	z_get_next_switch_handle
+	pop	$sp, $r1
+	xor	$r2, $r2
+	cmp	$r0, $r2
+	beq	5f
+	jsra	z_moxie_switch
+5:
+	/*
+	 * Leave through the call frame at the top of the exception frame:
+	 * "ret" reloads $fp and the resume address from it and drops the
+	 * whole exception frame.  Writing the saved status register arms
+	 * the core to restore the condition codes and the interrupt enable
+	 * as that "ret" branches, so nothing can interrupt us on the way
+	 * out.
+	 */
+	mov	$sp, $r6
+	ldo.l	$r1, ESF(r1)($sp)
+	ldo.l	$r2, ESF(r2)($sp)
+	ldo.l	$r3, ESF(r3)($sp)
+	ldo.l	$r4, ESF(r4)($sp)
+	ldo.l	$r5, ESF(r5)($sp)
+	ldo.l	$r12, ESF(r12)($sp)
+	ldo.l	$r13, ESF(r13)($sp)
+	ldo.l	$r6, ESF(r6)($sp)
+	mov	$fp, $sp
+	inc	$fp, ESF(fp)
+	ldo.l	$r0, ESF(sr)($sp)
+	ssr	$r0, MOXIE_SR_SAVED_STATUS
+	ldo.l	$r0, ESF(r0)($sp)
+	ret

@@ -1,0 +1,8 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+description: mox125 pipelined Moxie core
+
+compatible: "moxie,mox125"
+
+include: cpu.yaml
