@@ -55,6 +55,7 @@ $defs:
           - arm64
           - hexagon
           - mips
+          - moxie
           - nios2
           - openrisc
           - posix

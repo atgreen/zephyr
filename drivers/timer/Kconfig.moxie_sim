@@ -1,0 +1,9 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+config MOXIE_SIM_TIMER
+	bool "mox125 simulation timer"
+	default y
+	depends on DT_HAS_MOXIE_SIM_TIMER_ENABLED
+	help
+	  Periodic system timer provided by the mox125 simulation test bench.

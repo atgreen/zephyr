@@ -100,6 +100,16 @@ config OPENRISC
 	help
 	  OpenRISC architecture
 
+config MOXIE
+	bool
+	select ARCH_IS_SET
+	select ATOMIC_OPERATIONS_C
+	select BIG_ENDIAN
+	select USE_SWITCH
+	select USE_SWITCH_SUPPORTED
+	help
+	  Moxie architecture
+
 config SPARC
 	bool
 	select ARCH_IS_SET

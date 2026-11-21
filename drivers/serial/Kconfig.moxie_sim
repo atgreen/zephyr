@@ -1,0 +1,10 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+config UART_MOXIE_SIM
+	bool "mox125 simulation console"
+	default y
+	depends on DT_HAS_MOXIE_SIM_UART_ENABLED
+	select SERIAL_HAS_DRIVER
+	help
+	  Output-only console provided by the mox125 simulation test bench.

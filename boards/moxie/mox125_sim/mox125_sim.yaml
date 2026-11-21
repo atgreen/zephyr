@@ -1,0 +1,15 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: mox125_sim
+name: mox125 Verilator simulation
+type: sim
+arch: moxie
+toolchain:
+  - cross-compile
+ram: 1024
+testing:
+  ignore_tags:
+    - net
+    - bluetooth
+vendor: moxie

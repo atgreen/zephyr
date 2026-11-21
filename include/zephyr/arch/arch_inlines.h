@@ -28,6 +28,8 @@
 #include <zephyr/arch/mips/arch_inlines.h>
 #elif defined(CONFIG_OPENRISC)
 #include <zephyr/arch/openrisc/arch_inlines.h>
+#elif defined(CONFIG_MOXIE)
+#include <zephyr/arch/moxie/arch_inlines.h>
 #elif defined(CONFIG_ARCH_POSIX)
 #include <zephyr/arch/posix/arch_inlines.h>
 #elif defined(CONFIG_SPARC)

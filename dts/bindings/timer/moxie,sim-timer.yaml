@@ -1,0 +1,15 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+description: Periodic timer of the mox125 simulation, counting simulated clocks.
+
+compatible: "moxie,sim-timer"
+
+include: base.yaml
+
+properties:
+  reg:
+    required: true
+
+  interrupts:
+    required: true

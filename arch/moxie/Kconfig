@@ -1,0 +1,25 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+menu "Moxie Options"
+	depends on MOXIE
+
+config ARCH
+	string
+	default "moxie"
+
+config NUM_IRQS
+	int
+	default 16
+
+config GEN_ISR_TABLES
+	default y
+
+config GEN_IRQ_VECTOR_TABLE
+	default n
+
+config GEN_SW_ISR_TABLE
+	default y
+	depends on GEN_ISR_TABLES
+
+endmenu
