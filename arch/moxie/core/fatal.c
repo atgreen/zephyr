@@ -33,6 +33,10 @@ FUNC_NORETURN void z_moxie_fatal_error(unsigned int reason,
 static const char *cause_str(unsigned int cause)
 {
 	switch (cause) {
+	case MOXIE_CAUSE_DIV0:
+		return "divide by zero";
+	case MOXIE_CAUSE_UNDEFINED:
+		return "undefined instruction";
 	case MOXIE_CAUSE_IRQ:
 		return "interrupt";
 	case MOXIE_CAUSE_SWI:

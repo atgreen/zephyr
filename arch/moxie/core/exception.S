@@ -57,7 +57,25 @@ SECTION_FUNC(TEXT, z_moxie_exception_entry)
 	sto.l	ESF(sr)($sp), $r0
 	mov	$r6, $sp
 
-	/* The outermost exception moves to the interrupt stack. */
+	/*
+	 * Interrupts, and the software interrupt irq_offload() uses, run
+	 * as interrupts.  Anything else is a fault in whatever was
+	 * running and is dealt with in that context, so that a faulting
+	 * thread can be aborted like any other.
+	 */
+	gsr	$r1, MOXIE_SR_CAUSE
+	ldi.l	$r2, MOXIE_CAUSE_IRQ
+	cmp	$r1, $r2
+	beq	0f
+	ldi.l	$r2, MOXIE_CAUSE_SWI
+	cmp	$r1, $r2
+	beq	0f
+	dec	$sp, ARG_AREA
+	mov	$r0, $r6
+	jsra	z_moxie_exception
+	jmpa	5f
+0:
+	/* The outermost interrupt moves to the interrupt stack. */
 	lda.l	$r0, KERNEL(nested)
 	inc	$r0, 1
 	sta.l	KERNEL(nested), $r0

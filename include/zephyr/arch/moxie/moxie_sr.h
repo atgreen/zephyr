@@ -17,6 +17,8 @@
 
 #define MOXIE_STATUS_IE		0x1
 
+#define MOXIE_CAUSE_DIV0	0
+#define MOXIE_CAUSE_UNDEFINED	1
 #define MOXIE_CAUSE_IRQ		2
 #define MOXIE_CAUSE_SWI		3
 #define MOXIE_CAUSE_BRK		5
