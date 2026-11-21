@@ -13,7 +13,7 @@ if ZTEST
 config ZTEST_STACK_SIZE
 	int "Test function thread stack size"
 	default 2048 if COVERAGE_GCOV
-	default 2048 if X86
+	default 2048 if X86 || MOXIE
 	default 1024
 
 config ZTEST_TEST_DELAY_MS

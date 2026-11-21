@@ -6,9 +6,4 @@ if BOARD_MOX125_SIM
 config BUILD_OUTPUT_BIN
 	default n
 
-# One tick is this many simulated clocks at the 1 MHz the device tree
-# claims, so keep ticks far enough apart for the core to do some work.
-config SYS_CLOCK_TICKS_PER_SEC
-	default 20
-
 endif # BOARD_MOX125_SIM

@@ -104,14 +104,16 @@ SECTION_FUNC(TEXT, z_moxie_exception_entry)
 	jsra	z_moxie_switch
 5:
 	/*
-	 * Leave through the call frame at the top of the exception frame:
-	 * "ret" reloads $fp and the resume address from it and drops the
-	 * whole exception frame.  Writing the saved status register arms
-	 * the core to restore the condition codes and the interrupt enable
-	 * as that "ret" branches, so nothing can interrupt us on the way
-	 * out.
+	 * Put the resume address and status back where eret looks for
+	 * them, restore what we saved, and go.  eret restores the
+	 * condition codes and the interrupt enable as it jumps.
 	 */
 	mov	$sp, $r6
+	ldo.l	$r0, ESF(pc)($sp)
+	ssr	$r0, MOXIE_SR_RESUME
+	ldo.l	$r0, ESF(sr)($sp)
+	ssr	$r0, MOXIE_SR_SAVED_STATUS
+	ldo.l	$r0, ESF(r0)($sp)
 	ldo.l	$r1, ESF(r1)($sp)
 	ldo.l	$r2, ESF(r2)($sp)
 	ldo.l	$r3, ESF(r3)($sp)
@@ -120,9 +122,6 @@ SECTION_FUNC(TEXT, z_moxie_exception_entry)
 	ldo.l	$r12, ESF(r12)($sp)
 	ldo.l	$r13, ESF(r13)($sp)
 	ldo.l	$r6, ESF(r6)($sp)
-	mov	$fp, $sp
-	inc	$fp, ESF(fp)
-	ldo.l	$r0, ESF(sr)($sp)
-	ssr	$r0, MOXIE_SR_SAVED_STATUS
-	ldo.l	$r0, ESF(r0)($sp)
-	ret
+	ldo.l	$fp, ESF(fp)($sp)
+	inc	$sp, __struct_arch_esf_SIZEOF
+	eret

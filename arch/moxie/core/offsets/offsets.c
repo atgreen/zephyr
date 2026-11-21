@@ -28,7 +28,6 @@ GEN_OFFSET_STRUCT(arch_esf, r6);
 GEN_OFFSET_STRUCT(arch_esf, sr);
 GEN_OFFSET_STRUCT(arch_esf, fp);
 GEN_OFFSET_STRUCT(arch_esf, pc);
-GEN_OFFSET_STRUCT(arch_esf, static_chain);
 
 GEN_ABSOLUTE_SYM(__struct_arch_esf_SIZEOF, sizeof(struct arch_esf));
 
