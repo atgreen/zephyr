@@ -55,5 +55,7 @@ SECTION_FUNC(TEXT, z_moxie_thread_start)
 	ldi.l	$r4, MOXIE_STATUS_IE
 	ssr	$r4, MOXIE_SR_STATUS
 	xor	$fp, $fp
+	/* The argument area the ABI expects every caller to provide. */
+	dec	$sp, 24
 	jsra	z_thread_entry
 1:	jmpa	1b

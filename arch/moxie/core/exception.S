@@ -12,6 +12,13 @@
 #define ESF(field)	__struct_arch_esf_##field##_OFFSET
 #define KERNEL(field)	_kernel + _kernel_offset_to_##field
 
+/*
+ * The ABI has every caller provide room at the bottom of its frame for
+ * the callee to store the six argument registers, and compiled code
+ * does use it.
+ */
+#define ARG_AREA	24
+
 GTEXT(z_moxie_exception_entry)
 GTEXT(z_moxie_handle_irqs)
 GTEXT(z_moxie_exception)
@@ -59,6 +66,8 @@ SECTION_FUNC(TEXT, z_moxie_exception_entry)
 	bne	1f
 	lda.l	$sp, KERNEL(irq_stack)
 1:
+	dec	$sp, ARG_AREA
+
 	gsr	$r1, MOXIE_SR_CAUSE
 	ldi.l	$r2, MOXIE_CAUSE_IRQ
 	cmp	$r1, $r2
@@ -70,8 +79,6 @@ SECTION_FUNC(TEXT, z_moxie_exception_entry)
 	mov	$r0, $r6
 	jsra	z_moxie_exception
 3:
-	/* Back to the interrupted stack. */
-	mov	$sp, $r6
 	lda.l	$r0, KERNEL(nested)
 	dec	$r0, 1
 	sta.l	KERNEL(nested), $r0
@@ -84,11 +91,13 @@ SECTION_FUNC(TEXT, z_moxie_exception_entry)
 	 * different one, switch to it; we get back here when the
 	 * interrupted thread is next scheduled.
 	 */
+	mov	$sp, $r6
+	dec	$sp, ARG_AREA + 4
 	lda.l	$r1, KERNEL(current)
-	push	$sp, $r1
+	sto.l	ARG_AREA($sp), $r1
 	xor	$r0, $r0
 	jsra	z_get_next_switch_handle
-	pop	$sp, $r1
+	ldo.l	$r1, ARG_AREA($sp)
 	xor	$r2, $r2
 	cmp	$r0, $r2
 	beq	5f
