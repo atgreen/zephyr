@@ -1,0 +1,9 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+board:
+  name: mox125_nexys3
+  full_name: mox125 on the Digilent Nexys 3
+  vendor: moxie
+  socs:
+    - name: mox125

@@ -1,0 +1,15 @@
+# Copyright (c) 2026 Anthony Green
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: mox125_nexys3
+name: mox125 on the Digilent Nexys 3
+type: mcu
+arch: moxie
+toolchain:
+  - cross-compile
+ram: 16380
+testing:
+  ignore_tags:
+    - net
+    - bluetooth
+vendor: moxie
