@@ -15,11 +15,7 @@
 extern "C" {
 #endif
 
-/*
- * What the exception entry pushes on the interrupted stack.  The last
- * three words are laid out as a call frame, so the exit path can point
- * $fp at them and leave with "ret".
- */
+/* What the exception entry pushes on the interrupted stack. */
 struct arch_esf {
 	uint32_t r0;
 	uint32_t r1;
@@ -33,7 +29,6 @@ struct arch_esf {
 	uint32_t sr;	/* status: interrupt enable and condition codes */
 	uint32_t fp;
 	uint32_t pc;
-	uint32_t static_chain;
 };
 
 #ifdef __cplusplus

@@ -6,17 +6,24 @@
 
 #include <zephyr/irq.h>
 #include <zephyr/tracing/tracing.h>
+#include <zephyr/arch/moxie/moxie_sr.h>
 
 /*
- * Moxie has no wait-for-interrupt instruction, so idling is just
- * running with interrupts enabled.
+ * wfi stops the core until an interrupt is requested, and it wakes
+ * for a request even while interrupts are disabled.  So waiting first
+ * and enabling afterwards cannot miss one.
  */
+static ALWAYS_INLINE void moxie_wait(unsigned int key)
+{
+	__asm__ volatile ("wfi");
+	irq_unlock(key);
+}
 
 #ifndef CONFIG_ARCH_HAS_CUSTOM_CPU_IDLE
 void arch_cpu_idle(void)
 {
 	sys_trace_idle();
-	irq_unlock(1);
+	moxie_wait(MOXIE_STATUS_IE);
 }
 #endif
 
@@ -24,6 +31,6 @@ void arch_cpu_idle(void)
 void arch_cpu_atomic_idle(unsigned int key)
 {
 	sys_trace_idle();
-	irq_unlock(key);
+	moxie_wait(key);
 }
 #endif

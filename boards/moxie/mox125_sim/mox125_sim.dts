@@ -26,7 +26,12 @@
 			device_type = "cpu";
 			compatible = "moxie,mox125";
 			reg = <0>;
-			clock-frequency = <1000000>;
+			/*
+			 * Nominal.  Simulated time is counted in clocks, and
+			 * at this rate the default 100 ticks a second leaves
+			 * the core 50,000 clocks of work between ticks.
+			 */
+			clock-frequency = <5000000>;
 		};
 	};
 
